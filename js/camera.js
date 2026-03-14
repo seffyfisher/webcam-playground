@@ -29,9 +29,7 @@ async function initMediaPipe(videoElement) {
     if (onSegmentResults) onSegmentResults(results);
   });
 
-  // Initialize both models
-  await pose.initialize();
-  await segmenter.initialize();
+  // Models initialize automatically on first .send() call
 }
 
 function startCamera(videoElement) {

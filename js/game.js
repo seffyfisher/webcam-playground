@@ -1,6 +1,6 @@
 import { FallingObject, LEVELS } from './objects.js';
 import {
-  getPlayerX, getPlayerBounds, isTrackingLost, update as updateSilhouette,
+  getPlayerBounds, isTrackingLost, update as updateSilhouette,
 } from './silhouette.js';
 import { render } from './renderer.js';
 import {
