@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candy Catch!</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="screen-title" class="screen active">
+      <h1 class="game-title">Candy Catch!</h1>
+      <div class="bouncing-candy">🍬🍭🧁🍩</div>
+      <button id="btn-play" class="btn-play">PLAY</button>
+    </div>
+
+    <div id="screen-camera" class="screen">
+      <h2>Camera Time!</h2>
+      <p class="camera-prompt">We need your camera to play!<br>Ask a grown-up to click <strong>Allow</strong></p>
+      <div class="camera-icon">📷</div>
+      <p id="camera-error" class="error-msg" hidden>
+        Oops! We need the camera to play. Please refresh and click Allow!
+      </p>
+    </div>
+
+    <div id="screen-calibration" class="screen">
+      <canvas id="calibration-canvas"></canvas>
+      <div class="calibration-overlay">
+        <h2>Stand back so we can see you!</h2>
+        <p>Wave your hands! 👋</p>
+        <div id="calibration-status" class="calibration-status">Looking for you...</div>
+        <button id="btn-ready" class="btn-ready" hidden>I'm Ready!</button>
+      </div>
+    </div>
+
+    <div id="screen-gameplay" class="screen">
+      <canvas id="game-canvas" width="800" height="600"></canvas>
+    </div>
+
+    <div id="screen-gameover" class="screen">
+      <h2 class="gameover-title">Game Over!</h2>
+      <div id="final-score" class="final-score"></div>
+      <div id="stars" class="stars"></div>
+      <div id="confetti-container" class="confetti-container"></div>
+      <button id="btn-replay" class="btn-play">Play Again!</button>
+    </div>
+  </div>
+
+  <video id="webcam" autoplay playsinline style="display:none"></video>
+
+  <!-- MediaPipe -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/pose.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/selfie_segmentation.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
