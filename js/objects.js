@@ -1,6 +1,6 @@
 const CANDY_EMOJI = ['🍬', '🍭', '🧁', '🍩', '🍪', '🎂'];
 const VEGGIE_EMOJI = ['🥦', '🥕', '🥬', '🌽'];
-const EMOJI_SIZE = 48;
+const EMOJI_SIZE = 96; // Doubled the size of the falling emojis
 
 const spriteCache = new Map();
 

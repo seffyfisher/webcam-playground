@@ -16,7 +16,7 @@ let targetX = 0.5;
 let lostFrames = 0;
 const LOST_THRESHOLD = 10;
 const LERP_FACTOR = 0.3;
-const VISIBILITY_THRESHOLD = 0.7;
+const VISIBILITY_THRESHOLD = 0.5;
 
 function initSilhouette(width, height) {
   offscreenCanvas = document.createElement('canvas');
@@ -132,6 +132,8 @@ function drawSilhouette(ctx, canvasWidth, canvasHeight) {
   } else {
     drawPolygonSilhouette(ctx, canvasWidth, canvasHeight);
   }
+
+  drawHands(ctx, canvasWidth, canvasHeight);
 }
 
 function drawSegmentationSilhouette(ctx, canvasWidth, canvasHeight) {
@@ -151,6 +153,8 @@ function drawSegmentationSilhouette(ctx, canvasWidth, canvasHeight) {
   for (let i = 0; i < maskData.data.length; i += 4) {
     const confidence = maskData.data[i] / 255;
     if (confidence > 0.5) {
+      // Commented out the purple overlay color to keep the normal camera feed
+      /*
       const r = imgData.data[i];
       const g = imgData.data[i + 1];
       const b = imgData.data[i + 2];
@@ -158,6 +162,7 @@ function drawSegmentationSilhouette(ctx, canvasWidth, canvasHeight) {
       imgData.data[i] = Math.min(255, brightness * 0.4 + 120);
       imgData.data[i + 1] = Math.min(255, brightness * 0.2 + 50);
       imgData.data[i + 2] = Math.min(255, brightness * 0.4 + 180);
+      */
       imgData.data[i + 3] = Math.min(255, confidence * 255);
     } else {
       imgData.data[i + 3] = 0;
@@ -165,7 +170,14 @@ function drawSegmentationSilhouette(ctx, canvasWidth, canvasHeight) {
   }
 
   offscreenCtx.putImageData(imgData, 0, 0);
+  
+  // Real-time outline around the main player
+  ctx.save();
+  ctx.shadowColor = '#ffffff'; // White outline
+  ctx.shadowBlur = 15;
   ctx.drawImage(offscreenCanvas, 0, 0, canvasWidth, canvasHeight);
+  ctx.drawImage(offscreenCanvas, 0, 0, canvasWidth, canvasHeight); // drawing twice makes it thicker
+  ctx.restore();
 }
 
 function drawPolygonSilhouette(ctx, canvasWidth, canvasHeight) {
@@ -198,6 +210,40 @@ function drawPolygonSilhouette(ctx, canvasWidth, canvasHeight) {
   ctx.restore();
 }
 
+function drawHands(ctx, canvasWidth, canvasHeight) {
+  if (!latestPose || !latestPose.poseLandmarks) return;
+  const lm = latestPose.poseLandmarks;
+
+  ctx.save();
+  ctx.font = '80px system-ui';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+  ctx.shadowBlur = 8;
+
+  const drawHandIllustration = (landmarks) => {
+    let xSum = 0, ySum = 0, count = 0;
+    for (const idx of landmarks) {
+      const landmark = lm[idx];
+      if (landmark && landmark.visibility > VISIBILITY_THRESHOLD) {
+        xSum += (1 - landmark.x) * canvasWidth;
+        ySum += landmark.y * canvasHeight;
+        count++;
+      }
+    }
+    if (count > 0) {
+      ctx.fillText('✋🏻', xSum / count, ySum / count);
+    }
+  };
+
+  // Left hand points (15: wrist, 17: pinky, 19: index, 21: thumb)
+  drawHandIllustration([15, 17, 19, 21]);
+  // Right hand points (16: wrist, 18: pinky, 20: index, 22: thumb)
+  drawHandIllustration([16, 18, 20, 22]);
+
+  ctx.restore();
+}
+
 let stableFrames = 0;
 
 function checkCalibrationStable() {
@@ -209,16 +255,16 @@ function checkCalibrationStable() {
   const upperBody = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26];
   let visibleCount = 0;
   for (const idx of upperBody) {
-    if (latestPose.poseLandmarks[idx].visibility > 0.7) visibleCount++;
+    if (latestPose.poseLandmarks[idx].visibility > VISIBILITY_THRESHOLD) visibleCount++;
   }
 
-  if (visibleCount >= 8) {
+  if (visibleCount >= 6) {
     stableFrames++;
   } else {
     stableFrames = 0;
   }
 
-  return stableFrames >= 90;
+  return stableFrames >= 45;
 }
 
 function resetCalibration() {

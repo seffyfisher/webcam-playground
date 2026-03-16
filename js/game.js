@@ -20,13 +20,14 @@ let running = false;
 let onGameOver = null;
 
 const state = {
-  score: 0,
+  scores: [0, 0],
   level: 1,
-  lives: 3,
+  lives: [3, 3],
   objects: [],
   trackingLost: false,
   levelBannerTimer: 0,
   champCelebrated: false,
+  isTwoPlayer: false,
 };
 
 function initGame(canvasElement, gameOverCallback) {
@@ -37,10 +38,11 @@ function initGame(canvasElement, gameOverCallback) {
   onGameOver = gameOverCallback;
 }
 
-function startGame() {
-  state.score = 0;
+function startGame(isTwoPlayerMode = false) {
+  state.isTwoPlayer = isTwoPlayerMode;
+  state.scores = [0, 0];
   state.level = 1;
-  state.lives = 3;
+  state.lives = [3, 3];
   state.objects = [];
   state.trackingLost = false;
   state.levelBannerTimer = 0;
@@ -86,24 +88,33 @@ function loop() {
       if (!obj.alive) continue;
       const ob = obj.getBounds();
       if (aabb(playerBounds, ob)) {
-        obj.alive = false;
         const cx = ob.x + ob.width / 2;
         const cy = ob.y + ob.height / 2;
 
+          let pIdx = 0;
+          if (state.isTwoPlayer && cx > CANVAS_WIDTH / 2) {
+            pIdx = 1;
+          }
+
+          if (state.lives[pIdx] <= 0) continue; // Skip if this player is dead
+
+          obj.alive = false;
+
         if (obj.isCandy) {
-          state.score += 10;
+            state.scores[pIdx] += 10;
           spawnCatchParticles(cx, cy);
           playCatchSound();
           checkLevelUp();
         } else {
-          state.lives--;
+            state.lives[pIdx]--;
           spawnHitParticles(cx, cy);
           playHitSound();
-          if (state.lives <= 0) {
-            running = false;
-            if (onGameOver) onGameOver(state.score);
-            return;
-          }
+            const gameOver = state.isTwoPlayer ? (state.lives[0] <= 0 && state.lives[1] <= 0) : (state.lives[0] <= 0);
+            if (gameOver) {
+              running = false;
+              if (onGameOver) onGameOver(state.scores, state.isTwoPlayer);
+              return;
+            }
         }
       }
     }
@@ -118,14 +129,15 @@ function loop() {
 }
 
 function checkLevelUp() {
-  const newLevel = Math.min(5, Math.floor(state.score / 100) + 1);
+  const maxScore = state.isTwoPlayer ? Math.max(state.scores[0], state.scores[1]) : state.scores[0];
+  const newLevel = Math.min(5, Math.floor(maxScore / 100) + 1);
   if (newLevel > state.level) {
     state.level = newLevel;
     state.levelBannerTimer = 120;
     spawnLevelUpEffect(CANVAS_WIDTH, newLevel);
     playLevelUpSound();
   }
-  if (state.score >= 500 && !state.champCelebrated) {
+  if (maxScore >= 500 && !state.champCelebrated) {
     state.champCelebrated = true;
     state.levelBannerTimer = 180;
   }

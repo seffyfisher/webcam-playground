@@ -14,7 +14,7 @@ body {
   position: relative;
   width: 800px;
   height: 600px;
-  border-radius: 16px;
+  border-radius: 36px;
   overflow: hidden;
   box-shadow: 0 0 40px rgba(156, 39, 176, 0.3);
 }
@@ -30,17 +30,28 @@ body {
 .screen.active { display: flex; }
 
 #screen-title {
-  background: linear-gradient(135deg, #ff6b9d, #c44dff, #6c5ce7);
+  background: linear-gradient(143deg, #ffffff 0%, #7f97ff 50%, #000000 100%);
+  justify-content: flex-start;
+  padding-top: 64px;
+  padding-bottom: 60px;
+  overflow: hidden;
 }
 .game-title {
+  font-family: 'Inter', sans-serif;
   font-size: 72px;
+  font-weight: bold;
   color: white;
-  text-shadow: 4px 4px 0 #ff6b9d, 0 0 30px rgba(255,107,157,0.5);
-  margin-bottom: 20px;
+  text-shadow: none;
+  margin-bottom: 0;
 }
 .bouncing-candy {
-  font-size: 48px;
-  margin-bottom: 40px;
+  font-size: 234px;
+  line-height: 1;
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 950px;
+  text-align: center;
+  margin-left: -75px;
   animation: bounce 1s ease-in-out infinite alternate;
 }
 @keyframes bounce {
@@ -48,20 +59,36 @@ body {
   to { transform: translateY(-20px); }
 }
 
+.title-buttons {
+  display: flex;
+  gap: 27px;
+  width: 100%;
+  justify-content: center;
+  padding: 0 94px;
+}
+
 .btn-play {
+  font-family: Arial, sans-serif;
   font-size: 32px;
-  padding: 16px 64px;
+  height: 69px;
+  flex: 1;
   border: none;
   border-radius: 50px;
   background: #FFD700;
   color: #333;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 6px 0 #CC9900, 0 8px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 0 #c90, 0 8px 20px rgba(0,0,0,0.3);
   transition: transform 0.1s;
 }
 .btn-play:hover { transform: translateY(-2px); }
 .btn-play:active { transform: translateY(4px); box-shadow: 0 2px 0 #CC9900; }
+
+.btn-play-2p {
+  background: #d7eb87;
+  box-shadow: 0 6px 0 #809d0d, 0 8px 20px rgba(0,0,0,0.3);
+}
+.btn-play-2p:active { box-shadow: 0 2px 0 #809d0d; }
 
 #screen-camera {
   background: linear-gradient(135deg, #a8edea, #fed6e3);

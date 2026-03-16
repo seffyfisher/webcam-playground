@@ -37,33 +37,68 @@ function drawCloud(ctx, x, y, size) {
   ctx.fill();
 }
 
-function drawHUD(ctx, w, score, level, lives) {
+function drawHUD(ctx, w, gameState) {
   ctx.save();
 
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  roundRect(ctx, 15, 12, 160, 36, 18);
-  ctx.fill();
-  ctx.font = 'bold 18px system-ui';
-  ctx.fillStyle = '#E91E63';
-  ctx.textAlign = 'left';
-  ctx.fillText(`🍬 Score: ${score}`, 28, 36);
+  if (gameState.isTwoPlayer) {
+    // P1 Score & Lives
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    roundRect(ctx, 15, 12, 130, 60, 18);
+    ctx.fill();
+    ctx.font = 'bold 16px system-ui';
+    ctx.fillStyle = '#E91E63';
+    ctx.textAlign = 'left';
+    ctx.fillText(`P1 🍬: ${gameState.scores[0]}`, 28, 32);
+    ctx.font = '18px system-ui';
+    ctx.fillText('❤️'.repeat(gameState.lives[0]) || '💀', 28, 56);
 
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  roundRect(ctx, w / 2 - 60, 12, 120, 36, 18);
-  ctx.fill();
-  ctx.fillStyle = '#9C27B0';
-  ctx.textAlign = 'center';
-  ctx.fillText(`⭐ Level ${level}`, w / 2, 36);
+    // P2 Score & Lives
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    roundRect(ctx, w - 145, 12, 130, 60, 18);
+    ctx.fill();
+    ctx.font = 'bold 16px system-ui';
+    ctx.fillStyle = '#E91E63';
+    ctx.textAlign = 'right';
+    ctx.fillText(`P2 🍬: ${gameState.scores[1]}`, w - 28, 32);
+    ctx.font = '18px system-ui';
+    ctx.fillText('❤️'.repeat(gameState.lives[1]) || '💀', w - 28, 56);
 
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  roundRect(ctx, w - 130, 12, 115, 36, 18);
-  ctx.fill();
-  ctx.font = '20px system-ui';
-  ctx.textAlign = 'right';
-  ctx.fillText('❤️'.repeat(lives), w - 22, 37);
+    // Level
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    roundRect(ctx, w / 2 - 50, 12, 100, 36, 18);
+    ctx.fill();
+    ctx.font = 'bold 18px system-ui';
+    ctx.fillStyle = '#9C27B0';
+    ctx.textAlign = 'center';
+    ctx.fillText(`⭐ Lvl ${gameState.level}`, w / 2, 36);
+  } else {
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    roundRect(ctx, 15, 12, 160, 36, 18);
+    ctx.fill();
+    ctx.font = 'bold 18px system-ui';
+    ctx.fillStyle = '#E91E63';
+    ctx.textAlign = 'left';
+    ctx.fillText(`🍬 Score: ${gameState.scores[0]}`, 28, 36);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    roundRect(ctx, w / 2 - 60, 12, 120, 36, 18);
+    ctx.fill();
+    ctx.fillStyle = '#9C27B0';
+    ctx.textAlign = 'center';
+    ctx.fillText(`⭐ Level ${gameState.level}`, w / 2, 36);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    roundRect(ctx, w - 130, 12, 115, 36, 18);
+    ctx.fill();
+    ctx.font = '20px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText('❤️'.repeat(gameState.lives[0]) || '💀', w - 22, 37);
+  }
 
   ctx.restore();
 }
+
+
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -118,14 +153,15 @@ function render(ctx, w, h, gameState) {
   }
 
   drawEffects(ctx);
-  drawHUD(ctx, w, gameState.score, gameState.level, gameState.lives);
+  drawHUD(ctx, w, gameState);
 
   if (gameState.trackingLost) {
     drawTrackingLost(ctx, w, h);
   }
 
   if (gameState.levelBannerTimer > 0) {
-    drawLevelBanner(ctx, w, h, gameState.level, gameState.score);
+    const maxScore = gameState.isTwoPlayer ? Math.max(gameState.scores[0], gameState.scores[1]) : gameState.scores[0];
+    drawLevelBanner(ctx, w, h, gameState.level, maxScore);
   }
 
   ctx.restore();

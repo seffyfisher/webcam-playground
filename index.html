@@ -11,7 +11,10 @@
     <div id="screen-title" class="screen active">
       <h1 class="game-title">Candy Catch!</h1>
       <div class="bouncing-candy">🍬🍭🧁🍩</div>
-      <button id="btn-play" class="btn-play">PLAY</button>
+      <div class="title-buttons">
+        <button id="btn-play" class="btn-play">1 PLAYER</button>
+        <button id="btn-play-2p" class="btn-play btn-play-2p">2 PLAYERS</button>
+      </div>
     </div>
 
     <div id="screen-camera" class="screen">
@@ -21,6 +24,7 @@
       <p id="camera-error" class="error-msg" hidden>
         Oops! We need the camera to play. Please refresh and click Allow!
       </p>
+      <p id="camera-hint" class="error-msg" hidden></p>
     </div>
 
     <div id="screen-calibration" class="screen">

@@ -18,6 +18,7 @@ const SCREENS = {
 let currentScreen = null;
 let calibrationAnimId = null;
 let calibrationTimeoutId = null;
+let isTwoPlayerMode = false;
 
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -36,6 +37,14 @@ async function init() {
   initGame(gameCanvas, handleGameOver);
 
   document.getElementById('btn-play').addEventListener('click', () => {
+    isTwoPlayerMode = false;
+    initAudio();
+    showScreen(SCREENS.CAMERA);
+    requestCamera();
+  });
+
+  document.getElementById('btn-play-2p').addEventListener('click', () => {
+    isTwoPlayerMode = true;
     initAudio();
     showScreen(SCREENS.CAMERA);
     requestCamera();
@@ -56,6 +65,19 @@ async function init() {
 
 async function requestCamera() {
   try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showCameraError('Camera not supported on this browser.');
+      return;
+    }
+    if (!window.isSecureContext) {
+      const host = window.location.hostname;
+      const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+      const hint = isLocalhost
+        ? 'If you are on localhost, try using http://localhost (not file://).'
+        : 'Camera access requires HTTPS. Please use https:// and reload.';
+      showCameraError('Camera blocked in an insecure context.', hint);
+      return;
+    }
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { width: 640, height: 480, facingMode: 'user' },
     });
@@ -73,7 +95,20 @@ async function requestCamera() {
     startCalibration();
   } catch (err) {
     console.error('Camera error:', err);
-    document.getElementById('camera-error').hidden = false;
+    showCameraError('Oops! We need the camera to play. Please refresh and click Allow!');
+  }
+}
+
+function showCameraError(message, hint = '') {
+  const errorEl = document.getElementById('camera-error');
+  const hintEl = document.getElementById('camera-hint');
+  errorEl.textContent = message;
+  errorEl.hidden = false;
+  if (hint) {
+    hintEl.textContent = hint;
+    hintEl.hidden = false;
+  } else {
+    hintEl.hidden = true;
   }
 }
 
@@ -92,8 +127,10 @@ function startCalibration() {
     if (currentScreen !== SCREENS.CALIBRATION) return;
     calibrationAnimId = requestAnimationFrame(calibrationLoop);
 
-    ctx.fillStyle = '#1a0a2e';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    // Commented out the purple background to keep it normal
+    // ctx.fillStyle = '#1a0a2e';
+    // ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     drawSilhouette(ctx, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     if (checkCalibrationStable()) {
@@ -126,22 +163,30 @@ function transitionToGameplay() {
   }
   stopCalibration();
   showScreen(SCREENS.GAMEPLAY);
-  startGame();
+  startGame(isTwoPlayerMode);
 }
 
 function stopCalibration() {
   if (calibrationAnimId) cancelAnimationFrame(calibrationAnimId);
 }
 
-function handleGameOver(finalScore) {
+function handleGameOver(finalScores, isTwoPlayer) {
   stopGame();
   showScreen(SCREENS.GAMEOVER);
 
-  document.getElementById('final-score').textContent = `Score: ${finalScore}`;
+  const scoreEl = document.getElementById('final-score');
+  let maxScore = finalScores[0];
+
+  if (isTwoPlayer) {
+    scoreEl.innerHTML = `Player 1: ${finalScores[0]}<br>Player 2: ${finalScores[1]}`;
+    maxScore = Math.max(finalScores[0], finalScores[1]);
+  } else {
+    scoreEl.textContent = `Score: ${finalScores[0]}`;
+  }
 
   let stars = '⭐';
-  if (finalScore >= 300) stars = '⭐⭐⭐';
-  else if (finalScore >= 100) stars = '⭐⭐';
+  if (maxScore >= 300) stars = '⭐⭐⭐';
+  else if (maxScore >= 100) stars = '⭐⭐';
   document.getElementById('stars').textContent = stars;
 
   spawnConfetti();
