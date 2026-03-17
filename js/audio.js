@@ -43,6 +43,40 @@ function playHitSound() {
   osc.stop(audioCtx.currentTime + 0.3);
 }
 
+function playMIRVSplitSound() {
+  ensureAudio();
+
+  // Low rumble explosion
+  const noise = audioCtx.createOscillator();
+  const noiseGain = audioCtx.createGain();
+  noise.connect(noiseGain);
+  noiseGain.connect(audioCtx.destination);
+
+  noise.type = 'sawtooth';
+  noise.frequency.setValueAtTime(120, audioCtx.currentTime);
+  noise.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.3);
+  noiseGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+  noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+  noise.start();
+  noise.stop(audioCtx.currentTime + 0.4);
+
+  // High crackle
+  const crackle = audioCtx.createOscillator();
+  const crackleGain = audioCtx.createGain();
+  crackle.connect(crackleGain);
+  crackleGain.connect(audioCtx.destination);
+
+  crackle.type = 'square';
+  crackle.frequency.setValueAtTime(800, audioCtx.currentTime);
+  crackle.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+  crackleGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  crackleGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+
+  crackle.start();
+  crackle.stop(audioCtx.currentTime + 0.2);
+}
+
 function playLevelUpSound() {
   ensureAudio();
   const notes = [523, 659, 784, 1047];
@@ -62,4 +96,4 @@ function playLevelUpSound() {
   });
 }
 
-export { initAudio, playCatchSound, playHitSound, playLevelUpSound };
+export { initAudio, playCatchSound, playHitSound, playMIRVSplitSound, playLevelUpSound };

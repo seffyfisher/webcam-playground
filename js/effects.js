@@ -65,20 +65,34 @@ class ScorePopup {
   isDead() { return this.life <= 0; }
 }
 
-function spawnCatchParticles(x, y) {
-  const colors = ['#FFD700', '#FF6B9D', '#C44DFF', '#4ECDC4', '#FFE66D'];
+function spawnCatchParticles(x, y, points) {
+  const colors = ['#ff6b35', '#ffd700', '#ff4444', '#ff8c00', '#ffcc00'];
   for (let i = 0; i < 15; i++) {
     particles.push(new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]));
   }
-  popups.push(new ScorePopup(x, y - 20, '+10!', '#FFD700'));
+  const label = points === 5 ? '+5!' : '+10!';
+  popups.push(new ScorePopup(x, y - 20, label, '#FFD700'));
 }
 
 function spawnHitParticles(x, y) {
   for (let i = 0; i < 10; i++) {
     particles.push(new Particle(x, y, '#FF4444'));
   }
-  popups.push(new ScorePopup(x, y - 20, 'Uh oh!', '#FF4444'));
+  popups.push(new ScorePopup(x, y - 20, 'BOOM!', '#FF4444'));
   shakeAmount = 8;
+}
+
+function spawnMIRVSplitEffect(x, y) {
+  const colors = ['#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffffff'];
+  for (let i = 0; i < 25; i++) {
+    const p = new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]);
+    p.vx = (Math.random() - 0.5) * 14;
+    p.vy = (Math.random() - 0.5) * 10;
+    p.size = 2 + Math.random() * 5;
+    particles.push(p);
+  }
+  popups.push(new ScorePopup(x, y - 30, 'MIRV!', '#ff4400'));
+  shakeAmount = 5;
 }
 
 function spawnLevelUpEffect(canvasWidth, level) {
@@ -118,6 +132,6 @@ function clearEffects() {
 }
 
 export {
-  spawnCatchParticles, spawnHitParticles, spawnLevelUpEffect,
-  updateEffects, drawEffects, getShakeOffset, clearEffects,
+  spawnCatchParticles, spawnHitParticles, spawnMIRVSplitEffect,
+  spawnLevelUpEffect, updateEffects, drawEffects, getShakeOffset, clearEffects,
 };
