@@ -1,13 +1,18 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #1a0a2e;
+  background: #0a0a1a;
   overflow: hidden;
   font-family: 'Segoe UI', system-ui, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #app {
@@ -16,7 +21,7 @@ body {
   height: 600px;
   border-radius: 36px;
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(156, 39, 176, 0.3);
+  box-shadow: 0 0 40px rgba(255, 80, 20, 0.3);
 }
 
 .screen {
@@ -30,7 +35,7 @@ body {
 .screen.active { display: flex; }
 
 #screen-title {
-  background: linear-gradient(143deg, #ffffff 0%, #7f97ff 50%, #000000 100%);
+  background: linear-gradient(143deg, #0d1b2a 0%, #1b2838 50%, #0a0a1a 100%);
   justify-content: flex-start;
   padding-top: 64px;
   padding-bottom: 60px;
@@ -40,8 +45,8 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 72px;
   font-weight: bold;
-  color: white;
-  text-shadow: none;
+  color: #ff6b35;
+  text-shadow: 0 0 20px rgba(255, 107, 53, 0.5), 0 2px 4px rgba(0,0,0,0.5);
   margin-bottom: 0;
 }
 .bouncing-candy {
@@ -74,25 +79,26 @@ body {
   flex: 1;
   border: none;
   border-radius: 50px;
-  background: #FFD700;
-  color: #333;
+  background: #ff6b35;
+  color: #fff;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 6px 0 #c90, 0 8px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 0 #c44a1a, 0 8px 20px rgba(0,0,0,0.3);
   transition: transform 0.1s;
+  min-height: 48px;
 }
 .btn-play:hover { transform: translateY(-2px); }
-.btn-play:active { transform: translateY(4px); box-shadow: 0 2px 0 #CC9900; }
+.btn-play:active { transform: translateY(4px); box-shadow: 0 2px 0 #c44a1a; }
 
 .btn-play-2p {
-  background: #d7eb87;
-  box-shadow: 0 6px 0 #809d0d, 0 8px 20px rgba(0,0,0,0.3);
+  background: #4ecdc4;
+  box-shadow: 0 6px 0 #2a9d8f, 0 8px 20px rgba(0,0,0,0.3);
 }
-.btn-play-2p:active { box-shadow: 0 2px 0 #809d0d; }
+.btn-play-2p:active { box-shadow: 0 2px 0 #2a9d8f; }
 
 #screen-camera {
-  background: linear-gradient(135deg, #a8edea, #fed6e3);
-  color: #333;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #eee;
 }
 .camera-prompt { font-size: 22px; text-align: center; margin: 20px; line-height: 1.6; }
 .camera-icon { font-size: 80px; margin: 20px; animation: pulse 2s ease-in-out infinite; }
@@ -100,7 +106,7 @@ body {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
 }
-.error-msg { color: #e74c3c; font-size: 18px; margin-top: 20px; text-align: center; }
+.error-msg { color: #ff6b6b; font-size: 18px; margin-top: 20px; text-align: center; }
 
 #screen-calibration { background: #000; }
 #calibration-canvas { width: 100%; height: 100%; }
@@ -131,20 +137,21 @@ body {
   padding: 12px 40px;
   border: none;
   border-radius: 50px;
-  background: #4CAF50;
+  background: #ff6b35;
   color: white;
   font-weight: bold;
   cursor: pointer;
+  min-height: 48px;
 }
 
 #screen-gameplay { background: #000; }
 #game-canvas { width: 100%; height: 100%; }
 
 #screen-gameover {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #0d1b2a, #1b2838);
   color: white;
 }
-.gameover-title { font-size: 56px; margin-bottom: 20px; }
+.gameover-title { font-size: 56px; margin-bottom: 20px; color: #ff6b35; }
 .final-score { font-size: 36px; margin-bottom: 20px; }
 .stars { font-size: 64px; margin-bottom: 30px; }
 
@@ -159,14 +166,76 @@ body {
   100% { transform: translateY(650px) rotate(720deg); opacity: 0.5; }
 }
 
+/* Mobile responsive */
 @media (max-width: 850px) {
   #app {
     width: 100vw;
-    height: 75vw;
+    height: 100vh;
     border-radius: 0;
   }
+  .game-title {
+    font-size: 48px;
+  }
+  .bouncing-candy {
+    font-size: 120px;
+    width: 100%;
+    margin-left: 0;
+  }
+  .title-buttons {
+    padding: 0 24px;
+    gap: 16px;
+  }
+  .btn-play {
+    font-size: 24px;
+    height: 56px;
+  }
+  .calibration-overlay h2 { font-size: 24px; }
+  .calibration-overlay p { font-size: 18px; }
+  .gameover-title { font-size: 40px; }
+  .final-score { font-size: 28px; }
+  .stars { font-size: 48px; }
 }
-@media (max-height: 650px) {
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 36px;
+    padding-top: 10px;
+  }
+  #screen-title {
+    padding-top: 40px;
+    padding-bottom: 30px;
+  }
+  .bouncing-candy {
+    font-size: 80px;
+  }
+  .title-buttons {
+    flex-direction: column;
+    padding: 0 40px;
+    gap: 12px;
+  }
+  .btn-play {
+    font-size: 22px;
+    height: 52px;
+  }
+  .camera-prompt { font-size: 18px; }
+  .camera-icon { font-size: 60px; }
+}
+
+@media (max-height: 500px) {
+  #app {
+    height: 100vh;
+    width: 100vw;
+    border-radius: 0;
+  }
+  .game-title { font-size: 32px; }
+  .bouncing-candy { font-size: 80px; }
+  #screen-title {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 851px) {
   #app {
     height: 100vh;
     width: 133.33vh;

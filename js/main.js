@@ -195,7 +195,7 @@ function handleGameOver(finalScores, isTwoPlayer) {
 function spawnConfetti() {
   const container = document.getElementById('confetti-container');
   container.innerHTML = '';
-  const candyEmoji = ['🍬', '🍭', '🧁', '🍩', '🍪', '🎂'];
+  const candyEmoji = ['🚀', '🎯', '☄️', '💥', '🔥', '⭐'];
   for (let i = 0; i < 30; i++) {
     const span = document.createElement('span');
     span.textContent = candyEmoji[Math.floor(Math.random() * candyEmoji.length)];
